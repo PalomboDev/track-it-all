@@ -3,6 +3,11 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgres"
   url      = env("DATABASE_URL")
+}
+
+model ParcelProvider {
+  id   Int    @id @default(autoincrement())
+  name String
 }
