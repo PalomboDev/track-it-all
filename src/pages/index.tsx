@@ -1,28 +1,97 @@
 import type { NextPage } from "next";
 
+import { Box, Container, Center, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 
-import * as ParcelHandler from "@lib/parcel/ParcelHandler";
+import Parcel, { ParcelRecipient, ParcelEvent } from "@lib/parcel/Parcel";
 
-const Home: NextPage = () => {
-    const [parcelProvider, setParcelProvider] = useState<ParcelHandler.ParcelProvider | undefined>(undefined);
-    const [trackingNumber, setTrackingNumber] = useState<string>("");
+import TrackBox from "@components/track/TrackBox";
+
+const Index: NextPage = () => {
+    const [parcel, setParcel] = useState<Parcel | undefined>(undefined);
 
     return (
-        <div>
-            <p>Parcel Provider: {parcelProvider ? parcelProvider.name : "N/A"}</p>
+        <Box
+            sx={{
+                width: "100vw",
+                height: "100vh",
+                margin: "25px"
+            }}
+        >
+            <Container>
+                <TrackBox
+                    parcel={parcel}
+                    setParcel={setParcel}
+                />
 
-            <input
-                type={"text"}
-                value={trackingNumber}
-                onChange={(e) => setTrackingNumber(e.target.value)}
-            />
-
-            <button onClick={() => setParcelProvider(ParcelHandler.getProviderByTrackingNumber(trackingNumber))}>
-                Set
-            </button>
-        </div>
+                {parcel && <ParcelInformation parcel={parcel} />}
+            </Container>
+        </Box>
     );
 }
 
-export default Home;
+type ParcelInformationProps = {
+    parcel: Parcel;
+};
+
+function ParcelInformation({ parcel }: ParcelInformationProps): JSX.Element {
+    return (
+        <Box>
+            <Text>{parcel.trackingNumber}</Text>
+            <Text>{parcel.provider}</Text>
+
+            <ParcelInformationRecipient
+                recipient={parcel.recipient}
+            />
+
+            {parcel.events.map((event: ParcelEvent, index: number) => {
+                return (
+                    <ParcelInformationEvent
+                        key={index}
+                        event={event}
+                    />
+                )
+            })}
+        </Box>
+    );
+}
+
+type ParcelInformationRecipientProps = {
+    recipient: ParcelRecipient;
+};
+
+function ParcelInformationRecipient({ recipient }: ParcelInformationRecipientProps): JSX.Element {
+    return (
+        <Box
+            sx={{
+                borderBottom: "1px solid #ccc",
+                padding: "1rem"
+            }}
+        >
+            <Text>{recipient.name}</Text>
+            <Text>{recipient.address}</Text>
+            <Text>{recipient.postCode} {recipient.city} {recipient.subdivision}</Text>
+        </Box>
+    );
+}
+
+type ParcelInformationEventProps = {
+    event: ParcelEvent;
+};
+
+function ParcelInformationEvent({ event }: ParcelInformationEventProps): JSX.Element {
+    return (
+        <Box
+            sx={{
+                borderBottom: "1px solid #ccc",
+                padding: "1rem"
+            }}
+        >
+            <Text>{event.status}</Text>
+            <Text>{event.date.toLocaleString()}</Text>
+            <Text>{event.location}</Text>
+        </Box>
+    );
+}
+
+export default Index;

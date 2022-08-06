@@ -1,4 +1,4 @@
-import { ParcelType } from "@lib/parcel/ParcelType";
+import { ParcelType } from "@lib/parcel/provider/type/ParcelProviderType";
 
 export default abstract class ParcelProvider {
 
