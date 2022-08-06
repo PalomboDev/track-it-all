@@ -9,5 +9,6 @@ datasource db {
 
 model ParcelProvider {
   id   Int    @id @default(autoincrement())
+  key  String @unique
   name String
 }
