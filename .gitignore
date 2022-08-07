@@ -131,3 +131,6 @@ dist
 
 .env
 .env.local
+
+.idea
+.idea/*
