@@ -23,6 +23,10 @@
       "@lib/*": [ "./lib/*" ],
       "@types/*": [ "./types/*" ]
     },
+    "typeRoots": [
+      "./src/lib/types",
+      "./node_modules/@types",
+    ]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

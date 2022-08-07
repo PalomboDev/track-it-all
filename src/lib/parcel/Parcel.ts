@@ -1,3 +1,5 @@
+import type { ParcelRecipient, ParcelEvent } from "@lib/types";
+
 export default class Parcel {
 
     private readonly _trackingNumber: string;
@@ -28,17 +30,3 @@ export default class Parcel {
         return this._events.sort((a, b) => b.date.getTime() - a.date.getTime());
     }
 }
-
-export type ParcelRecipient = {
-    name: string | null;
-    address: string | null;
-    postCode: string | null;
-    city: string | null;
-    subdivision: string | null;
-};
-
-export type ParcelEvent = {
-    status: string;
-    date: Date;
-    location: string;
-};
