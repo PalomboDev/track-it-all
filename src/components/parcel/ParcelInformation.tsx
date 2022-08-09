@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ParcelEvent, ParcelRecipient } from "@lib/types/parcel";
 import { Box, Container, Text, Timeline } from "@mantine/core";
-import { useStatusToIcon } from "../../hooks/useStatusToIcon";
+import { useStatusToIcon } from "@hooks/useStatusToIcon";
 
 import Parcel from "@lib/parcel/Parcel";
 

@@ -1,7 +1,6 @@
 import type { ParcelEvent, ParcelRecipient } from "@lib/types/parcel";
 
 import { TextInput, Button, Group, Title, Paper, Loader } from "@mantine/core";
-import { NotificationsProvider, showNotification } from "@mantine/notifications";
 import { useForm } from "@mantine/form";
 import { useEffect } from "react";
 import { NextRouter, useRouter } from "next/router";
@@ -98,42 +97,40 @@ export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }:
     }
 
     return (
-        <NotificationsProvider position={"top-center"}>
-            <Paper
-                shadow={"lg"}
-                p={"xl"}
-                withBorder={true}
+        <Paper
+            shadow={"lg"}
+            p={"xl"}
+            withBorder={true}
+        >
+            <Title
+                sx={{
+                    textAlign: "center",
+                    margin: "1rem 0"
+                }}
             >
-                <Title
-                    sx={{
-                        textAlign: "center",
-                        margin: "1rem 0"
-                    }}
-                >
-                    Universal Package Tracking
-                </Title>
+                Universal Package Tracking
+            </Title>
 
-                <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
-                    <TextInput
-                        required={true}
-                        label={"Tracking Number"}
-                        placeholder={"123456789"}
-                        {...form.getInputProps("trackingNumber")}
-                    />
+            <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
+                <TextInput
+                    required={true}
+                    label={"Tracking Number"}
+                    placeholder={"123456789"}
+                    {...form.getInputProps("trackingNumber")}
+                />
 
-                    <Group position={"right"} mt={"md"}>
-                        <Button
-                            disabled={isLoading}
-                            type={"submit"}
-                            sx={{
-                                width: "100%"
-                            }}
-                        >
-                            {isLoading ? <Loader size={"xs"} variant={"dots"}/> : "Track"}
-                        </Button>
-                    </Group>
-                </form>
-            </Paper>
-        </NotificationsProvider>
+                <Group position={"right"} mt={"md"}>
+                    <Button
+                        disabled={isLoading}
+                        type={"submit"}
+                        sx={{
+                            width: "100%"
+                        }}
+                    >
+                        {isLoading ? <Loader size={"xs"} variant={"dots"}/> : "Track"}
+                    </Button>
+                </Group>
+            </form>
+        </Paper>
     );
 }
