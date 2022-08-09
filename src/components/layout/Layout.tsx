@@ -1,4 +1,4 @@
-import type { HeaderLink } from "@lib/types";
+import type { HeaderLink } from "@lib/types/layout";
 
 import Header from "@components/layout/Header";
 import Footer from "@components/layout/Footer";

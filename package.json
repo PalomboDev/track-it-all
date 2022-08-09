@@ -25,6 +25,7 @@
     "@mantine/rte": "^5.0.2",
     "@mantine/spotlight": "^5.0.2",
     "@prisma/client": "4.1.1",
+    "@supabase/supabase-js": "^1.35.6",
     "config": "^3.3.7",
     "dayjs": "^1.11.4",
     "embla-carousel-react": "^7.0.0",

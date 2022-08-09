@@ -1,4 +1,4 @@
-import type { HeaderLink } from "@lib/types";
+import type { HeaderLink } from "@lib/types/layout";
 
 import {
     Menu,
@@ -7,15 +7,13 @@ import {
     Group,
     Button,
     Burger,
-    Image,
     Paper,
-    MantineTheme,
-    useMantineTheme,
     Header as MantineHeader,
     createStyles
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons";
+import { NextRouter, useRouter } from "next/router";
 
 const HEADER_HEIGHT = 60;
 
@@ -64,7 +62,7 @@ type HeaderProps = {
 };
 
 export default function Header({ links }: HeaderProps) {
-    const theme: MantineTheme = useMantineTheme();
+    const router: NextRouter = useRouter();
 
     const { classes } = useStyles();
     const [opened, { toggle }] = useDisclosure(false);
@@ -121,7 +119,14 @@ export default function Header({ links }: HeaderProps) {
                     <Group spacing={5} className={classes.links}>
                         {items}
                     </Group>
-                    <Button size={"md"} radius={"xl"} sx={{ height: 30 }}>
+                    <Button
+                        size={"md"}
+                        radius={"xl"}
+                        onClick={() => {
+                            router.push("/auth/login").catch(console.error);
+                        }}
+                        sx={{ height: 30 }}
+                    >
                         Sign In
                     </Button>
                 </Container>

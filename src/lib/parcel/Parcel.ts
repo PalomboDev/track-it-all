@@ -1,4 +1,4 @@
-import type { ParcelRecipient, ParcelEvent } from "@lib/types";
+import type { ParcelRecipient, ParcelEvent } from "@lib/types/parcel";
 
 export default class Parcel {
 
