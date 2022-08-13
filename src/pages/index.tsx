@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 
 import { Box } from "@mantine/core";
 import { useEffect, useState } from "react";
@@ -8,8 +8,15 @@ import { ParcelInformation } from "@components/parcel/ParcelInformation";
 import Parcel from "@lib/parcel/Parcel";
 import Layout from "@components/layout/Layout";
 import TrackBox from "@components/track/TrackBox";
+import { GetServerSidePropsResult } from "next";
+import { getUserServerSideProps } from "@lib/auth";
+import { User } from "@supabase/gotrue-js";
 
-const Index: NextPage = () => {
+type IndexProps = {
+    user: User | null;
+};
+
+const Index: NextPage<IndexProps> = ({ user }) => {
     const router: NextRouter = useRouter();
 
     const [parcel, setParcel] = useState<Parcel | undefined>(undefined);
@@ -29,7 +36,7 @@ const Index: NextPage = () => {
     }, [parcel]);
 
     return (
-        <Layout>
+        <Layout user={user}>
             <Box
                 sx={{
                     margin: "auto",
@@ -47,10 +54,17 @@ const Index: NextPage = () => {
                     setParcel={setParcel}
                 />
 
-                {parcel && <ParcelInformation parcel={parcel}/>}
+                {parcel && <ParcelInformation
+                    user={user}
+                    parcel={parcel}
+                />}
             </Box>
         </Layout>
     );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<IndexProps>> {
+    return getUserServerSideProps(context);
 }
 
 export default Index;

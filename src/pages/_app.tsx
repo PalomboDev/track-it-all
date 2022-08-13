@@ -12,47 +12,47 @@ import Head from "next/head";
 
 export default function App(props: AppProps) {
     const { Component, pageProps } = props;
-    const [isSessionLoading, setIsSessionLoading] = useState<boolean>(true);
-    const [session, setSession] = useState<Session | null>(null);
-    const [user, setUser] = useState<User | null>(null);
-
-    function loadUserError(): void {
-        setSession(null);
-        setUser(null);
-
-        window.localStorage.removeItem("supabase.auth.token");
-    }
-
-    useEffect(() => {
-        setSession(supabase.auth.session());
-
-        supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session);
-        });
-    }, []);
-
-    useEffect(() => {
-        if (isSessionLoading) {
-            setIsSessionLoading(false);
-        }
-
-        if (session) {
-            supabase.auth.api.getUser(session.access_token).then((data) => {
-                if (data.error) {
-                    loadUserError();
-                } else if (data.user) {
-                    setUser(data.user);
-                }
-            }).catch((error) => {
-                console.error(error);
-                loadUserError();
-            });
-        }
-    }, [session]);
-
-    if (isSessionLoading || (session && !user)) {
-        return <LoadingPage/>;
-    }
+    // const [isSessionLoading, setIsSessionLoading] = useState<boolean>(true);
+    // const [session, setSession] = useState<Session | null>(null);
+    // const [user, setUser] = useState<User | null>(null);
+    //
+    // function loadUserError(): void {
+    //     setSession(null);
+    //     setUser(null);
+    //
+    //     window.localStorage.removeItem("supabase.auth.token");
+    // }
+    //
+    // useEffect(() => {
+    //     setSession(supabase.auth.session());
+    //
+    //     supabase.auth.onAuthStateChange((_event, session) => {
+    //         setSession(session);
+    //     });
+    // }, []);
+    //
+    // useEffect(() => {
+    //     if (isSessionLoading) {
+    //         setIsSessionLoading(false);
+    //     }
+    //
+    //     if (session) {
+    //         supabase.auth.api.getUser(session.access_token).then((data) => {
+    //             if (data.error) {
+    //                 loadUserError();
+    //             } else if (data.user) {
+    //                 setUser(data.user);
+    //             }
+    //         }).catch((error) => {
+    //             console.error(error);
+    //             loadUserError();
+    //         });
+    //     }
+    // }, [session]);
+    //
+    // if (isSessionLoading || (session && !user)) {
+    //     return <LoadingPage/>;
+    // }
 
     return (
         <div
@@ -77,9 +77,10 @@ export default function App(props: AppProps) {
                 }}
             >
                 <NotificationsProvider position={"top-right"}>
-                    <CreatedSessionContext.Provider value={{ session }}>
-                        <Component {...pageProps} />
-                    </CreatedSessionContext.Provider>
+                    <Component {...pageProps} />
+                    {/*<CreatedSessionContext.Provider value={{ session }}>*/}
+                    {/*    <Component {...pageProps} />*/}
+                    {/*</CreatedSessionContext.Provider>*/}
                 </NotificationsProvider>
             </MantineProvider>
         </div>

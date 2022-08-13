@@ -1,12 +1,12 @@
-import type { ParcelEvent, ParcelRecipient } from "@lib/types/parcel";
-
-import { TextInput, Button, Group, Title, Paper, Loader } from "@mantine/core";
+import { TextInput, Button, Group, Title, Paper, Anchor, Loader } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { NextRouter, useRouter } from "next/router";
 import { sendErrorNotification } from "@lib/notifications";
+import { mostRecentTrackedIdKey } from "@lib/constants";
 
 import Parcel from "@lib/parcel/Parcel";
+import Link from "next/link";
 
 type TrackBoxProps = {
     isLoading: boolean;
@@ -17,6 +17,16 @@ type TrackBoxProps = {
 
 export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }: TrackBoxProps): JSX.Element {
     const router: NextRouter = useRouter();
+
+    const mostRecentTrackingNumber = useMemo<string | undefined>(() => {
+        if (typeof window !== "undefined") {
+            const trackingNumber: string | null = window.localStorage.getItem(mostRecentTrackedIdKey);
+
+            if (trackingNumber && router.query.trackingNumber && trackingNumber !== router.query.trackingNumber) {
+                return trackingNumber;
+            }
+        }
+    }, [router.query.trackingNumber]);
 
     const form = useForm({
         initialValues: {
@@ -35,6 +45,8 @@ export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }:
 
             form.setValues(newValues);
             onSubmit(newValues).catch(console.error);
+
+            window.localStorage.setItem(mostRecentTrackedIdKey, newValues.trackingNumber);
         }
     }, [router.query.trackingNumber]);
 
@@ -53,11 +65,10 @@ export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }:
             sendErrorNotification(new Error("Check tracking number and try again."));
         }
 
-        const response: Response = await fetch("https://api.ship24.com/public/v1/trackers/track", {
+        const response: Response = await fetch("/api/track", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer apik_Qn3MusstRdw6IHTQZPjszWFwuTbTZO"
             },
             body: JSON.stringify({
                 trackingNumber
@@ -67,27 +78,7 @@ export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }:
         if (response.ok) {
             // Response Data
             const data: any = await response.json();
-            const trackings: any = data.data.trackings[0];
-            const shipment: any = trackings.shipment;
-            const recipient: any = shipment.recipient;
-            const events: any[] = trackings.events;
-
-            // Curated Parcel Data
-            const parcelRecipient: ParcelRecipient = {
-                name: recipient.name,
-                address: recipient.address,
-                postCode: recipient.postCode,
-                city: recipient.city,
-                subdivision: recipient.subdivision
-            };
-            const parcelEvents: ParcelEvent[] = events.map((event: any) => {
-                return {
-                    status: event.status,
-                    date: new Date(event.datetime),
-                    location: event.location
-                };
-            });
-            const parcel: Parcel = new Parcel(trackingNumber, "FedMex", parcelRecipient, parcelEvents);
+            const parcel: Parcel = data.parcel as Parcel;
 
             setParcel(parcel);
             setIsLoading(false);
@@ -108,7 +99,7 @@ export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }:
                     margin: "1rem 0"
                 }}
             >
-                Universal Package Tracking
+                Track Any Package
             </Title>
 
             <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
@@ -118,6 +109,17 @@ export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }:
                     placeholder={"123456789"}
                     {...form.getInputProps("trackingNumber")}
                 />
+
+                {mostRecentTrackingNumber &&
+                    <Link href={`/?trackingNumber=${mostRecentTrackingNumber}`} passHref={true}>
+                        <Anchor
+                            size={"sm"}
+                            mt={"md"}
+                            onClick={() => window.localStorage.removeItem(mostRecentTrackedIdKey)}
+                        >
+                            Previously Tracked: {mostRecentTrackingNumber}
+                        </Anchor>
+                    </Link>}
 
                 <Group position={"right"} mt={"md"}>
                     <Button

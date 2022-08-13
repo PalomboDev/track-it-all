@@ -15,6 +15,11 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons";
 import { NextRouter, useRouter } from "next/router";
 
+import Link from "next/link";
+import { logout, redirectToLogin } from "@lib/auth";
+import { User } from "@supabase/gotrue-js";
+import { removeCookies } from "cookies-next";
+
 const HEADER_HEIGHT = 60;
 
 const useStyles = createStyles((theme) => ({
@@ -58,10 +63,11 @@ const useStyles = createStyles((theme) => ({
 }));
 
 type HeaderProps = {
+    user?: User | null;
     links: HeaderLink[];
 };
 
-export default function Header({ links }: HeaderProps) {
+export default function Header({ user, links }: HeaderProps) {
     const router: NextRouter = useRouter();
 
     const { classes } = useStyles();
@@ -76,16 +82,17 @@ export default function Header({ links }: HeaderProps) {
             return (
                 <Menu key={link.label} trigger={"hover"} exitTransitionDuration={0}>
                     <Menu.Target>
-                        <a
-                            href={link.link}
-                            className={classes.link}
-                            onClick={(event) => event.preventDefault()}
-                        >
-                            <Center>
-                                <span className={classes.linkLabel}>{link.label}</span>
-                                <IconChevronDown size={12} stroke={1.5}/>
-                            </Center>
-                        </a>
+                        <Link key={link.link} href={link.link} passHref={true}>
+                            <a
+                                className={classes.link}
+                                onClick={(event) => event.preventDefault()}
+                            >
+                                <Center>
+                                    <span className={classes.linkLabel}>{link.label}</span>
+                                    <IconChevronDown size={12} stroke={1.5}/>
+                                </Center>
+                            </a>
+                        </Link>
                     </Menu.Target>
                     <Menu.Dropdown>{menuItems}</Menu.Dropdown>
                 </Menu>
@@ -93,14 +100,13 @@ export default function Header({ links }: HeaderProps) {
         }
 
         return (
-            <a
-                key={link.label}
-                href={link.link}
-                className={classes.link}
-                onClick={(event) => event.preventDefault()}
-            >
-                {link.label}
-            </a>
+            <Link key={link.link} href={link.link} passHref={true}>
+                <a
+                    className={classes.link}
+                >
+                    {link.label}
+                </a>
+            </Link>
         );
     });
 
@@ -123,11 +129,15 @@ export default function Header({ links }: HeaderProps) {
                         size={"md"}
                         radius={"xl"}
                         onClick={() => {
-                            router.push("/auth/login").catch(console.error);
+                            if (user) {
+                                logout().then(data => router.push("/")).catch(console.error);
+                            } else {
+                                redirectToLogin(router).catch(console.error);
+                            }
                         }}
                         sx={{ height: 30 }}
                     >
-                        Sign In
+                        {user ? "Sign Out" : "Sign In"}
                     </Button>
                 </Container>
             </Paper>

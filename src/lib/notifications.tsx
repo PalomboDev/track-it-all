@@ -6,7 +6,7 @@ export function sendErrorNotification(error: Error): void {
         message: error.message,
         color: "white",
         autoClose: 10000,
-        disallowClose: true,
+        disallowClose: false,
         styles: (theme) => ({
             root: {
                 backgroundColor: theme.colors.red[6],

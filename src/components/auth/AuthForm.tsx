@@ -10,22 +10,22 @@ import {
 import { Box, Button, Loader } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
-import { SessionContext, useSession } from "@hooks/useSession";
 import { AlreadyLoggedIn } from "@components/auth/AlreadyLoggedIn";
-import { login, register } from "@lib/auth";
+import { login  } from "@lib/auth";
 
 import LoginForm from "@components/auth/LoginForm";
 import RegisterForm from "@components/auth/RegisterForm";
 import { sendErrorNotification } from "@lib/notifications";
 import { NextRouter, useRouter } from "next/router";
+import { User } from "@supabase/gotrue-js";
 
 type AuthFormProps = {
+    user?: User | null;
     type: AuthFormType;
 };
 
-export default function AuthForm({ type }: AuthFormProps) {
+export default function AuthForm({ user, type }: AuthFormProps) {
     const router: NextRouter = useRouter();
-    const { session }: SessionContext = useSession();
 
     const [initialValues, setInitialValues] = useState<any>({});
     const [validate, setValidate] = useState<any>(null);
@@ -74,7 +74,7 @@ export default function AuthForm({ type }: AuthFormProps) {
             case AuthFormType.LOGIN: {
                 let loginFormValues = values as LoginFormValues;
 
-                login(loginFormValues).then(data => {
+                login(loginFormValues, router).then(data => {
                     setIsSubmitting(false);
 
                     if (!data) {
@@ -106,8 +106,8 @@ export default function AuthForm({ type }: AuthFormProps) {
         }
     }
 
-    if (session !== null && session.user !== null) {
-        return <AlreadyLoggedIn user={session.user}/>;
+    if (user) {
+        return <AlreadyLoggedIn user={user}/>;
     }
 
     return (
