@@ -4,9 +4,9 @@ import { LoginFormValues, RegisterFormValues } from "@lib/types/auth";
 import { NextRouter } from "next/router";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { refreshToken, accessToken } from "@lib/constants";
-import { removeCookies } from "cookies-next";
+import { deleteCookie } from "cookies-next";
 
-export async function login(loginFormValues: LoginFormValues, router?: NextRouter): Promise<User | null | void> {
+export async function login(loginFormValues: LoginFormValues, router?: NextRouter): Promise<{ user: User | null; error: Error | null } | null | void> {
     const response: Response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
@@ -15,13 +15,16 @@ export async function login(loginFormValues: LoginFormValues, router?: NextRoute
         body: JSON.stringify(loginFormValues),
     });
 
+    const data = await response.json();
+
+    if (data.error) {
+        return {
+            user: null,
+            error: new Error(data.error.message)
+        };
+    }
+
     if (response.status === 200) {
-        const data = await response.json();
-
-        if (data.error) {
-            throw new Error(data.error.message);
-        }
-
         const session: Session = data.session;
 
         if (session && session.access_token && session.refresh_token) {
@@ -29,7 +32,10 @@ export async function login(loginFormValues: LoginFormValues, router?: NextRoute
 
             if (newSession) {
                 if (newSession.error) {
-                    throw new Error(newSession.error.message);
+                    return {
+                        user: null,
+                        error: new Error(data.error.message)
+                    };
                 }
 
                 if (newSession.session?.access_token) {
@@ -44,7 +50,10 @@ export async function login(loginFormValues: LoginFormValues, router?: NextRoute
                             }
                         }
 
-                        return session.user;
+                        return {
+                            user: session.user,
+                            error: null
+                        };
                     }
                 }
             }
@@ -88,13 +97,25 @@ export async function logout(): Promise<{ error: ApiError | null }> {
         };
     }
 
-    if (supabase) {
-        return supabase.auth.signOut().then(data => {
-            removeCookies(refreshToken);
-            removeCookies(accessToken);
+    const response: Response = await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
 
-            return data;
-        });
+    if (!response.ok) {
+        const data = await response.json();
+
+        console.error(data.error);
+    }
+
+    // Should never have these cookies set, but just in case...
+    deleteCookie(accessToken);
+    deleteCookie(refreshToken);
+
+    if (supabase) {
+        return await supabase.auth.signOut();
     }
 
     return {

@@ -77,9 +77,16 @@ export default function AuthForm({ user, type }: AuthFormProps) {
                 login(loginFormValues, router).then(data => {
                     setIsSubmitting(false);
 
-                    if (!data) {
-                        throw new Error("Refresh and try again!");
+                    if (data && data.error) {
+                        handleError(data.error);
+                        return;
                     }
+
+                    if (data && data.user) {
+                        return;
+                    }
+
+                    throw new Error("Refresh and try again!");
                 }).catch(handleError);
                 break;
             }

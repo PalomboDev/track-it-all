@@ -14,11 +14,11 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown } from "@tabler/icons";
 import { NextRouter, useRouter } from "next/router";
-
-import Link from "next/link";
 import { logout, redirectToLogin } from "@lib/auth";
 import { User } from "@supabase/gotrue-js";
-import { removeCookies } from "cookies-next";
+
+import Link from "next/link";
+import useCallbackUrl from "@hooks/useCallbackUrl";
 
 const HEADER_HEIGHT = 60;
 
@@ -69,6 +69,7 @@ type HeaderProps = {
 
 export default function Header({ user, links }: HeaderProps) {
     const router: NextRouter = useRouter();
+    const callbackUrl: string | undefined = useCallbackUrl();
 
     const { classes } = useStyles();
     const [opened, { toggle }] = useDisclosure(false);
@@ -130,7 +131,9 @@ export default function Header({ user, links }: HeaderProps) {
                         radius={"xl"}
                         onClick={() => {
                             if (user) {
-                                logout().then(data => router.push("/")).catch(console.error);
+                                logout().then(data => {
+                                    router.reload();
+                                }).catch(console.error);
                             } else {
                                 redirectToLogin(router).catch(console.error);
                             }
