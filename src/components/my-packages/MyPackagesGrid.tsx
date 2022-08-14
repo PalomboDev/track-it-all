@@ -40,6 +40,14 @@ export default function MyPackagesGrid({ user }: MyPackagesGridProps): JSX.Eleme
 
     return (
         <Box>
+            {data && data.length === 0 && <Text
+                sx={{
+                    textAlign: "center"
+                }}
+            >
+                You aren't tracking any packages.
+            </Text>}
+
             <SimpleGrid
                 cols={4}
                 spacing={"lg"}
