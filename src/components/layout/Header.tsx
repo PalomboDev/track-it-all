@@ -8,18 +8,17 @@ import {
     Button,
     Burger,
     Paper,
-    Image,
+    Title,
     Menu,
     Header as MantineHeader,
-    createStyles, MantineTheme, Title
+    createStyles
 } from "@mantine/core";
-import { useDisclosure, useMediaQuery, useViewportSize } from "@mantine/hooks";
-import { IconChevronDown, IconLogout, IconUserCircle } from "@tabler/icons";
+import { useDisclosure } from "@mantine/hooks";
+import { IconChevronDown, IconLogout } from "@tabler/icons";
 import { NextRouter, useRouter } from "next/router";
 import { logout, redirectToLogin } from "@lib/auth";
 import { User } from "@supabase/gotrue-js";
 import { sendSuccessNotification } from "@lib/notifications";
-import { useMemo } from "react";
 
 import emoji from "node-emoji";
 import Link from "next/link";
@@ -66,9 +65,9 @@ const useStyles = createStyles((theme) => ({
     },
 
     linkActive: {
-        '&, &:hover': {
-            backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
-            color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+        "&, &:hover": {
+            backgroundColor: theme.fn.variant({ variant: "light", color: theme.primaryColor }).background,
+            color: theme.fn.variant({ variant: "light", color: theme.primaryColor }).color,
         },
     },
 }));
@@ -81,12 +80,8 @@ type HeaderProps = {
 export default function Header({ user, links }: HeaderProps) {
     const router: NextRouter = useRouter();
 
-    const { width } = useViewportSize();
     const { classes } = useStyles();
     const [opened, { toggle }] = useDisclosure(false);
-
-    const isSmall = useMemo<boolean>(() => width < 769, [width]);
-    const actionButtonDisplay = useMemo<string>(() => isSmall ? "none" : "inline-block", [isSmall]);
 
     const items = links.map((link) => {
         const menuItems = link.links?.map((item) => (
@@ -159,7 +154,6 @@ export default function Header({ user, links }: HeaderProps) {
                                         color={"dark"}
                                         variant={"subtle"}
                                         leftIcon={<IconLogout/>}
-                                        className={classes.link}
                                         sx={{
                                             width: "100%"
                                         }}
@@ -181,7 +175,6 @@ export default function Header({ user, links }: HeaderProps) {
                                         color={"dark"}
                                         variant={"subtle"}
                                         leftIcon={<IconLogout/>}
-                                        className={classes.link}
                                         sx={{
                                             width: "100%"
                                         }}
@@ -240,7 +233,7 @@ export default function Header({ user, links }: HeaderProps) {
                                     "@media (max-width: 768px)": {
                                         display: "none"
                                     }
-                            }}
+                                }}
                             >
                                 Profile
                             </Button>
