@@ -10,6 +10,8 @@ import { NextRouter, useRouter } from "next/router";
 
 import moment, { Moment } from "moment/moment";
 
+import EditNameModal from "@components/my-packages/EditNameModal";
+
 type MyPackagesGridItemProps = {
     myPackage: MyPackage;
     reload: () => void;
@@ -22,6 +24,7 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
 
     const [isViewing, setIsViewing] = useState<boolean>(false);
     const [isModifying, setIsModifying] = useState<boolean>(false);
+    const [isEditNameModalOpen, setIsEditNameModalOpen] = useState<boolean>(false);
 
     function handleView(): void {
         if (isViewing) {
@@ -35,7 +38,12 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
         }).catch(console.error);
     }
 
-    // Modify
+    function handleEditName(): void {
+        if (isModifying) {
+            return;
+        }
+    }
+
     function handleStopTracking(): void {
         if (isModifying) {
             return;
@@ -52,7 +60,7 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
             reload();
 
             if (data.data) {
-                sendSuccessNotification("Success", "You have stopped tracking this package!", 5000);
+                sendSuccessNotification("You have stopped tracking this package!", "", 5000);
             } else {
                 throw new Error("Something went wrong");
             }
@@ -73,6 +81,13 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
                 textAlign: "center"
             }}
         >
+            <EditNameModal
+                myPackage={myPackage}
+                isEditNameModalOpen={isEditNameModalOpen}
+                setIsEditNameModalOpen={setIsEditNameModalOpen}
+                reload={reload}
+            />
+
             <Text size={"lg"} weight={500}>
                 {myPackage.name ?? myPackage.trackingNumber}
             </Text>
@@ -134,8 +149,9 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
                     <Menu.Dropdown>
                         <Menu.Item
                             icon={<IconPencil size={"14px"}/>}
-                            disabled={isViewing || isModifying}
-                            onClick={handleStopTracking}
+                            // disabled={isViewing || isModifying}
+                            // onClick={handleStopTracking}
+                            onClick={() => setIsEditNameModalOpen(true)}
                         >
                             Edit Name
                         </Menu.Item>

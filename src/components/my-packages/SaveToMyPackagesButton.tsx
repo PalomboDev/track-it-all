@@ -64,7 +64,7 @@ export default function SaveToMyPackagesButton({ user, parcel }: SaveToMyPackage
             }
 
             if (data.data) {
-                sendSuccessNotification("Success", "You have started tracking this package!", 5000);
+                sendSuccessNotification("You have started tracking this package!", "", 5000);
             } else {
                 sendErrorNotification(new Error("Something went wrong"), 5000);
             }
@@ -89,7 +89,7 @@ export default function SaveToMyPackagesButton({ user, parcel }: SaveToMyPackage
         }
 
         if (data.data) {
-            sendSuccessNotification("Success", "You have stopped tracking this package!", 5000);
+            sendSuccessNotification("You have stopped tracking this package!", "", 5000);
         } else {
             sendErrorNotification(new Error("Something went wrong"), 5000);
         }

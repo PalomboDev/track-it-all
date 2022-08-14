@@ -2,11 +2,11 @@ import type { NextPage } from "next";
 
 import { Box, Title } from "@mantine/core";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { getUserServerSideProps } from "@lib/auth";
+import { getUserServerSideProps, redirectToLogin } from "@lib/auth";
 import { User } from "@supabase/gotrue-js";
+import { NextRouter, useRouter } from "next/router";
 
 import Layout from "@components/layout/Layout";
-import MyPackagesTable from "@components/my-packages/MyPackagesTable";
 import MyPackagesGrid from "@components/my-packages/MyPackagesGrid";
 
 type MyPackagesIndexProps = {
@@ -14,10 +14,14 @@ type MyPackagesIndexProps = {
 };
 
 const MyPackagesIndex: NextPage<MyPackagesIndexProps> = ({ user }) => {
+    const router: NextRouter = useRouter();
+
     if (!user) {
+        redirectToLogin(router).catch(console.error);
+
         return (
             <Layout user={user}>
-                <Box>No User Found</Box>
+                <></>
             </Layout>
         );
     }

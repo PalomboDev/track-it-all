@@ -3,6 +3,7 @@ import type { MyPackage } from "@prisma/client";
 import { supabase } from "@lib/supabaseClient";
 import { useState, useMemo, useEffect } from "react";
 import { PostgrestError } from "@supabase/supabase-js";
+import { getMyPackages } from "@lib/parcel/handler";
 
 export type MyPackagesData = {
     data: MyPackage[] | null;
@@ -27,21 +28,17 @@ export function useGetMyPackages(userId: string | undefined): MyPackagesData {
 
     function reload() {
         if (userId) {
-            supabase
-                .from("MyPackage")
-                .select("*")
-                .eq("userId", userId)
-                .then(data => {
-                    if (data.error) {
-                        setError(data.error);
-                        setIsLoading(false);
-                    } else if (data.data) {
-                        setMyPackages(data.data);
-                        setIsLoading(false);
-                    } else {
-                        setIsLoading(false);
-                    }
-                });
+            getMyPackages(userId).then(data => {
+                if (data.error) {
+                    setError(data.error);
+                    setIsLoading(false);
+                } else if (data.data) {
+                    setMyPackages(data.data);
+                    setIsLoading(false);
+                } else {
+                    setIsLoading(false);
+                }
+            });
         }
     }
 

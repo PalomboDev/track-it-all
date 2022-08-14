@@ -1,7 +1,7 @@
 import type { User } from "@supabase/gotrue-js";
 import type { MyPackage } from "@prisma/client";
 
-import { Table, Text, Card, Box, Tooltip, Group, Button, SimpleGrid, Divider, Loader } from "@mantine/core";
+import { Text, Box, SimpleGrid, Loader } from "@mantine/core";
 import { useGetMyPackages } from "@hooks/useGetMyPackages";
 
 import moment, { Moment } from "moment/moment";
@@ -16,7 +16,13 @@ export default function MyPackagesGrid({ user }: MyPackagesGridProps): JSX.Eleme
 
     if (isLoading) {
         return (
-            <Text>Loading...</Text>
+            <Box
+                sx={{
+                    textAlign: "center"
+                }}
+            >
+                <Loader variant={"oval"}/>
+            </Box>
         );
     }
 

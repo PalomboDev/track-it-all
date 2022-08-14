@@ -4,11 +4,6 @@ import { useEffect, useState } from "react";
 import { ParcelEvent, ParcelRecipient } from "@lib/types/parcel";
 import { Box, Container, Text, Timeline, SimpleGrid, Loader, Button } from "@mantine/core";
 import { useStatusToIcon } from "@hooks/useStatusToIcon";
-import { NextRouter, useRouter } from "next/router";
-import { supabase } from "@lib/supabaseClient";
-import { redirectToLogin } from "@lib/auth";
-import { startTrackingMyPackage } from "@lib/parcel/handler";
-import { sendErrorNotification, sendSuccessNotification } from "@lib/notifications";
 
 import moment, { Moment } from "moment";
 
