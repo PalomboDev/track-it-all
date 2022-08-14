@@ -109,9 +109,9 @@ export default function Header({ user, links }: HeaderProps) {
         }
 
         return (
-            <Link key={link.link} href={link.link} passHref={true}>
+            <Link key={link.link} href={link.link} passHref={true} className={classes.link}>
                 <a
-                    className={classes.link + " " + (router.pathname === link.link ? classes.linkActive : "")}
+                    className={router.pathname === link.link ? classes.linkActive : ""}
                 >
                     <Button
                         size={"sm"}
