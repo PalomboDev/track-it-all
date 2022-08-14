@@ -139,8 +139,6 @@ export async function redirectToLogin(router: NextRouter): Promise<boolean> {
 export async function getUserServerSideProps(context: GetServerSidePropsContext, redirect?: string, source?: string, props?: any): Promise<GetServerSidePropsResult<any>> {
     const data = await supabase.auth.api.getUserByCookie(context.req);
 
-    console.log("Session:", await supabase.auth.api.getUserByCookie(context.req, context.res));
-
     if (!data.error && data.user) {
         return {
             props: {

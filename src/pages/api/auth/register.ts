@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { ApiError, User } from "@supabase/gotrue-js";
-import { supabaseAdmin } from "@lib/supabaseClient";
+import { supabase, supabaseAdmin } from "@lib/supabaseClient";
 
 type Data = {
     user: User | null;
@@ -44,11 +44,20 @@ export default function handler(req: NextApiRequest, res: NextApiResponse<Data>)
         return;
     }
 
-    if (supabaseAdmin) {
-        supabaseAdmin.auth.api.createUser({
+    if (supabase) {
+        // supabaseAdmin.auth.api.createUser({
+        //     email,
+        //     password,
+        //     user_metadata: {
+        //         firstName,
+        //         lastName
+        //     }
+        // })
+        supabase.auth.signUp({
             email,
-            password,
-            user_metadata: {
+            password
+        }, {
+            data: {
                 firstName,
                 lastName
             }
