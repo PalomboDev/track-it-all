@@ -7,7 +7,6 @@ import {
     Button,
     Burger,
     Paper,
-    Text,
     Menu,
     Header as MantineHeader,
     createStyles
@@ -17,10 +16,9 @@ import { IconChevronDown, IconLogout } from "@tabler/icons";
 import { NextRouter, useRouter } from "next/router";
 import { logout, redirectToLogin } from "@lib/auth";
 import { User } from "@supabase/gotrue-js";
+import { sendSuccessNotification } from "@lib/notifications";
 
 import Link from "next/link";
-import { sendSuccessNotification } from "@lib/notifications";
-import { useMemo } from "react";
 
 const HEADER_HEIGHT = 60;
 
@@ -110,18 +108,15 @@ export default function Header({ user, links }: HeaderProps) {
 
         return (
             <Link key={link.link} href={link.link} passHref={true} className={classes.link}>
-                <a
+                <Button
                     className={router.pathname === link.link ? classes.linkActive : ""}
+                    size={"sm"}
+                    color={"dark"}
+                    variant={"subtle"}
+                    leftIcon={link.icon}
                 >
-                    <Button
-                        size={"sm"}
-                        color={"dark"}
-                        variant={"subtle"}
-                        leftIcon={link.icon}
-                    >
-                        {link.label}
-                    </Button>
-                </a>
+                    {link.label}
+                </Button>
             </Link>
         );
     });
