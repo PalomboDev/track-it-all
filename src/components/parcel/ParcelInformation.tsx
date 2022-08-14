@@ -1,16 +1,19 @@
+import type { User } from "@supabase/gotrue-js";
+
 import { useEffect, useState } from "react";
 import { ParcelEvent, ParcelRecipient } from "@lib/types/parcel";
 import { Box, Container, Text, Timeline, SimpleGrid, Loader, Button } from "@mantine/core";
 import { useStatusToIcon } from "@hooks/useStatusToIcon";
-import { IconPlus } from "@tabler/icons";
-import { SessionContext, useSession } from "@hooks/useSession";
 import { NextRouter, useRouter } from "next/router";
 import { supabase } from "@lib/supabaseClient";
 import { redirectToLogin } from "@lib/auth";
+import { startTrackingMyPackage } from "@lib/parcel/handler";
+import { sendErrorNotification, sendSuccessNotification } from "@lib/notifications";
+
+import moment, { Moment } from "moment";
 
 import Parcel from "@lib/parcel/Parcel";
-import { User } from "@supabase/gotrue-js";
-import moment, { Moment } from "moment";
+import SaveToMyPackagesButton from "@components/my-packages/SaveToMyPackagesButton";
 
 type ParcelInformationProps = {
     user?: User | null;
@@ -18,10 +21,7 @@ type ParcelInformationProps = {
 };
 
 export function ParcelInformation({ user, parcel }: ParcelInformationProps): JSX.Element {
-    const router: NextRouter = useRouter();
-
     const [isDelivered, setIsDelivered] = useState<boolean>(false);
-    const [isSavingToMyPackages, setIsSavingToMyPackages] = useState<boolean>(false);
 
     const recipient: ParcelRecipient = parcel.recipient;
 
@@ -42,28 +42,6 @@ export function ParcelInformation({ user, parcel }: ParcelInformationProps): JSX
         }
     }, [parcel]);
 
-    async function onSaveToMyPackages(): Promise<void> {
-        if (isSavingToMyPackages) {
-            return;
-        }
-
-        let requireLogin: boolean = true;
-
-        if (user) {
-            const refreshData = await supabase.auth.refreshSession();
-
-            if (refreshData && refreshData.data && refreshData.data.access_token) {
-                requireLogin = false;
-            }
-        }
-
-        if (requireLogin) {
-            redirectToLogin(router).catch(console.error);
-        } else {
-            setIsSavingToMyPackages(false);
-        }
-    }
-
     return (
         <Box>
             <Box
@@ -73,20 +51,7 @@ export function ParcelInformation({ user, parcel }: ParcelInformationProps): JSX
                     width: "100%"
                 }}
             >
-                <Button
-                    color={"orange"}
-                    mt={"1.2rem"}
-                    type={"submit"}
-                    disabled={isSavingToMyPackages}
-                    leftIcon={isSavingToMyPackages ? <Loader
-                        color={"white"}
-                        size={"sm"}
-                        variant={"oval"}
-                    /> : <IconPlus/>}
-                    onClick={onSaveToMyPackages}
-                >
-                    Save To My Packages
-                </Button>
+                <SaveToMyPackagesButton user={user} parcel={parcel}/>
             </Box>
 
             <SimpleGrid

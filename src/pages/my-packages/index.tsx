@@ -1,36 +1,51 @@
 import type { NextPage } from "next";
 
-import { Box } from "@mantine/core";
-import { NextRouter, useRouter } from "next/router";
-
-import Layout from "@components/layout/Layout";
+import { Box, Title } from "@mantine/core";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { getUserServerSideProps } from "@lib/auth";
 import { User } from "@supabase/gotrue-js";
+
+import Layout from "@components/layout/Layout";
+import MyPackagesTable from "@components/my-packages/MyPackagesTable";
+import MyPackagesGrid from "@components/my-packages/MyPackagesGrid";
 
 type MyPackagesIndexProps = {
     user: User | null;
 };
 
 const MyPackagesIndex: NextPage<MyPackagesIndexProps> = ({ user }) => {
-    const router: NextRouter = useRouter();
+    if (!user) {
+        return (
+            <Layout user={user}>
+                <Box>No User Found</Box>
+            </Layout>
+        );
+    }
 
     return (
-        <Layout>
-            <Box
+        <Layout user={user}>
+            <Title
                 sx={{
-                    margin: "auto",
-                    maxWidth: "750px",
-
-                    "@media (max-width: 768px)": {
-                        margin: "0px 10px"
-                    }
+                    fontSize: "2rem",
+                    fontWeight: "bold",
+                    marginBottom: "1rem",
+                    textAlign: "center"
                 }}
             >
-                <p>My Packages</p>
+                My Packages
+            </Title>
+
+            <Box
+                sx={{
+                    maxWidth: "80%",
+                    margin: "0 auto"
+                }}
+            >
+                <MyPackagesGrid user={user}/>
             </Box>
         </Layout>
-    );
+
+    )
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<MyPackagesIndexProps>> {

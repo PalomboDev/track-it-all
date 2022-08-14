@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             setCookie(accessToken, session.access_token, {
                 req,
                 res,
-                maxAge: 60,
+                maxAge: 60 * 60 * 24,
                 httpOnly: true,
                 sameSite: "strict"
             });

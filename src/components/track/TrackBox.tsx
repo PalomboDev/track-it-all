@@ -65,7 +65,7 @@ export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }:
             sendErrorNotification(new Error("Check tracking number and try again."));
         }
 
-        const response: Response = await fetch("/api/track", {
+        const response: Response = await fetch("/api/package/track", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

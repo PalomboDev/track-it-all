@@ -8,13 +8,15 @@ datasource db {
 }
 
 model User {
-  id         Int          @id @unique
-  MyPackages MyPackages[]
+  id         String      @id @unique @db.Uuid
+  MyPackages MyPackage[]
 }
 
-model MyPackages {
-  id             Int    @id @default(autoincrement())
-  user           User   @relation(fields: [userId], references: [id])
-  userId         Int
+model MyPackage {
+  id             String   @id @unique @default(uuid()) @db.Uuid
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String   @db.Uuid
+  name           String?
   trackingNumber String
+  insertedAt     DateTime @default(now())
 }
