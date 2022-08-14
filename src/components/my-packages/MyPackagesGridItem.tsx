@@ -20,7 +20,7 @@ type MyPackagesGridItemProps = {
 export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGridItemProps): JSX.Element {
     const router: NextRouter = useRouter();
 
-    const date: Moment = moment.utc(myPackage.insertedAt).local(true);
+    const date: Moment = moment.utc(myPackage.insertedAt).local(false);
 
     const [isViewing, setIsViewing] = useState<boolean>(false);
     const [isModifying, setIsModifying] = useState<boolean>(false);

@@ -19,4 +19,6 @@ model MyPackage {
   name           String?
   trackingNumber String
   insertedAt     DateTime @default(now())
+
+  @@unique([userId, trackingNumber])
 }

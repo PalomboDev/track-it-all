@@ -1,5 +1,10 @@
 import { FormErrors, FormValidateInput } from "@mantine/form/lib/types";
 
+export enum AuthProvider {
+    EMAIL_PASSWORD = "EMAIL_PASSWORD",
+    GITHUB = "GITHUB",
+}
+
 export enum AuthFormType {
     LOGIN = "LOGIN",
     REGISTER = "REGISTER"

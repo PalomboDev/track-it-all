@@ -5,7 +5,7 @@ export function sendSuccessNotification(title: string, message: string, autoClos
         title: title,
         message: message,
         color: "white",
-        autoClose: autoClose ?? 10000,
+        autoClose: autoClose ?? 5000,
         disallowClose: false,
         styles: (theme) => ({
             root: {
@@ -31,7 +31,7 @@ export function sendErrorNotification(error: Error, autoClose?: number): void {
         title: "Something went wrong",
         message: error.message,
         color: "white",
-        autoClose: autoClose ?? 10000,
+        autoClose: autoClose ?? 5000,
         disallowClose: false,
         styles: (theme) => ({
             root: {

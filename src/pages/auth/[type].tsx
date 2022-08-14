@@ -1,10 +1,11 @@
 import type { GetServerSidePropsContext, GetServerSidePropsResult, NextPage } from "next";
+import type { User } from "@supabase/gotrue-js";
 
 import { AuthFormType } from "@lib/types/auth";
+import { getUserServerSideProps } from "@lib/auth";
 
 import AuthForm from "@components/auth/AuthForm";
-import { User } from "@supabase/gotrue-js";
-import { getUserServerSideProps } from "@lib/auth";
+import Layout from "@components/layout/Layout";
 
 type AuthProps = {
     user: User | null;
@@ -12,7 +13,11 @@ type AuthProps = {
 };
 
 const Auth: NextPage<AuthProps> = ({ user, type }: AuthProps) => {
-    return <AuthForm user={user} type={type}/>;
+    return (
+        <Layout>
+            <AuthForm user={user} type={type}/>
+        </Layout>
+    );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext): Promise<GetServerSidePropsResult<AuthProps>> {

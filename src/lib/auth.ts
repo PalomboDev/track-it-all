@@ -5,6 +5,7 @@ import { NextRouter } from "next/router";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 import { refreshToken, accessToken } from "@lib/constants";
 import { deleteCookie } from "cookies-next";
+import { sendSuccessNotification } from "@lib/notifications";
 
 export async function login(loginFormValues: LoginFormValues, router?: NextRouter): Promise<{ user: User | null; error: Error | null } | null | void> {
     const response: Response = await fetch("/api/auth/login", {
@@ -34,7 +35,7 @@ export async function login(loginFormValues: LoginFormValues, router?: NextRoute
                 if (newSession.error) {
                     return {
                         user: null,
-                        error: new Error(data.error.message)
+                        error: new Error(newSession.error.message)
                     };
                 }
 
@@ -46,7 +47,9 @@ export async function login(loginFormValues: LoginFormValues, router?: NextRoute
                             const { callbackUrl } = router.query;
 
                             if (callbackUrl) {
-                                router.push(callbackUrl as string).catch(console.error);
+                                router.push(callbackUrl as string).then(data => {
+                                    sendSuccessNotification("You have successfully logged in!", "", 5000);
+                                }).catch(console.error);
                             }
                         }
 
@@ -124,6 +127,10 @@ export async function logout(): Promise<{ error: ApiError | null }> {
 }
 
 export async function redirectToLogin(router: NextRouter): Promise<boolean> {
+    if (router.asPath.startsWith("/auth/login")) {
+        return false;
+    }
+
     let callbackUrl: string = router.asPath ? `?callbackUrl=${router.asPath}` : "";
 
     return router.push(`/auth/login${callbackUrl}`);
@@ -131,6 +138,8 @@ export async function redirectToLogin(router: NextRouter): Promise<boolean> {
 
 export async function getUserServerSideProps(context: GetServerSidePropsContext, redirect?: string, source?: string, props?: any): Promise<GetServerSidePropsResult<any>> {
     const data = await supabase.auth.api.getUserByCookie(context.req);
+
+    console.log("Session:", await supabase.auth.api.getUserByCookie(context.req, context.res));
 
     if (!data.error && data.user) {
         return {

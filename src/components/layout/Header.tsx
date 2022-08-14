@@ -1,13 +1,14 @@
 import type { HeaderLink } from "@lib/types/layout";
 
 import {
-    Menu,
     Center,
     Container,
     Group,
     Button,
     Burger,
     Paper,
+    Text,
+    Menu,
     Header as MantineHeader,
     createStyles
 } from "@mantine/core";
@@ -18,7 +19,7 @@ import { logout, redirectToLogin } from "@lib/auth";
 import { User } from "@supabase/gotrue-js";
 
 import Link from "next/link";
-import useCallbackUrl from "@hooks/useCallbackUrl";
+import { sendSuccessNotification } from "@lib/notifications";
 
 const HEADER_HEIGHT = 60;
 
@@ -60,6 +61,13 @@ const useStyles = createStyles((theme) => ({
     linkLabel: {
         marginRight: 5,
     },
+
+    linkActive: {
+        '&, &:hover': {
+            backgroundColor: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).background,
+            color: theme.fn.variant({ variant: 'light', color: theme.primaryColor }).color,
+        },
+    },
 }));
 
 type HeaderProps = {
@@ -69,7 +77,6 @@ type HeaderProps = {
 
 export default function Header({ user, links }: HeaderProps) {
     const router: NextRouter = useRouter();
-    const callbackUrl: string | undefined = useCallbackUrl();
 
     const { classes } = useStyles();
     const [opened, { toggle }] = useDisclosure(false);
@@ -103,9 +110,16 @@ export default function Header({ user, links }: HeaderProps) {
         return (
             <Link key={link.link} href={link.link} passHref={true}>
                 <a
-                    className={classes.link}
+                    className={classes.link + " " + (router.pathname === link.link ? classes.linkActive : "")}
                 >
-                    {link.label}
+                    <Button
+                        size={"sm"}
+                        color={"dark"}
+                        variant={"subtle"}
+                        leftIcon={link.icon}
+                    >
+                        {link.label}
+                    </Button>
                 </a>
             </Link>
         );
@@ -119,7 +133,16 @@ export default function Header({ user, links }: HeaderProps) {
                     fluid={true}
                 >
                     <Group>
-                        <Burger opened={opened} onClick={toggle} className={classes.burger} size={"sm"}/>
+                        <Menu shadow={"md"} width={200} opened={opened}>
+                            <Menu.Target>
+                                <Burger opened={opened} onClick={toggle} className={classes.burger} size={"sm"}/>
+                            </Menu.Target>
+
+                            <Menu.Dropdown className={classes.burger}>
+                                {items}
+                            </Menu.Dropdown>
+                        </Menu>
+
                         <h1>TrackItAll</h1>
                         {/* <MantineLogo size={28} /> */}
                     </Group>
@@ -132,7 +155,9 @@ export default function Header({ user, links }: HeaderProps) {
                         onClick={() => {
                             if (user) {
                                 logout().then(data => {
-                                    router.reload();
+                                    router.push("/").then(data => {
+                                        sendSuccessNotification("You have successfully logged out!", "", 5000);
+                                    }).catch(console.error);
                                 }).catch(console.error);
                             } else {
                                 redirectToLogin(router).catch(console.error);
