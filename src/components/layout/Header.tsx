@@ -13,13 +13,14 @@ import {
     createStyles
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown } from "@tabler/icons";
+import { IconChevronDown, IconLogout } from "@tabler/icons";
 import { NextRouter, useRouter } from "next/router";
 import { logout, redirectToLogin } from "@lib/auth";
 import { User } from "@supabase/gotrue-js";
 
 import Link from "next/link";
 import { sendSuccessNotification } from "@lib/notifications";
+import { useMemo } from "react";
 
 const HEADER_HEIGHT = 60;
 
@@ -149,24 +150,48 @@ export default function Header({ user, links }: HeaderProps) {
                     <Group spacing={5} className={classes.links}>
                         {items}
                     </Group>
-                    <Button
+
+                    {!user && <Button
                         size={"md"}
                         radius={"xl"}
                         onClick={() => {
-                            if (user) {
-                                logout().then(data => {
-                                    router.push("/").then(data => {
-                                        sendSuccessNotification("You have successfully logged out!", "", 5000);
-                                    }).catch(console.error);
-                                }).catch(console.error);
-                            } else {
+                            if (!user) {
                                 redirectToLogin(router).catch(console.error);
                             }
                         }}
                         sx={{ height: 30 }}
                     >
-                        {user ? "Sign Out" : "Sign In"}
-                    </Button>
+                        Login
+                    </Button>}
+
+                    {user && <Menu shadow="md" width={200}>
+                        <Menu.Target>
+                            <Button
+                                size={"md"}
+                                radius={"xl"}
+                                sx={{ height: 30 }}
+                            >
+                                Profile
+                            </Button>
+                        </Menu.Target>
+
+                        <Menu.Dropdown>
+                            <Menu.Label>{user?.email}</Menu.Label>
+                            <Menu.Divider/>
+                            <Menu.Item
+                                icon={<IconLogout size={14}/>}
+                                onClick={() => {
+                                    logout().then(data => {
+                                        router.push("/").then(data => {
+                                            sendSuccessNotification("You have successfully logged out!", "", 5000);
+                                        }).catch(console.error);
+                                    }).catch(console.error);
+                                }}
+                            >
+                                Logout
+                            </Menu.Item>
+                        </Menu.Dropdown>
+                    </Menu>}
                 </Container>
             </Paper>
         </MantineHeader>

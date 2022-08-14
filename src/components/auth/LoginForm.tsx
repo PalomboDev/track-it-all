@@ -20,15 +20,15 @@ export default function LoginForm({ values, setValues, errors }: ChildAuthFormPr
                 onChange={(event) => setValues({ ...values, password: event.target.value })}
             />
 
-            <Input.Wrapper
-                label={"Remember Me"}
-            >
-                <Checkbox
-                    name={"rememberMe"}
-                    checked={values.rememberMe || false}
-                    onChange={(event: any) => setValues({ ...values, rememberMe: event.target.checked })}
-                />
-            </Input.Wrapper>
+            {/*<Input.Wrapper*/}
+            {/*    label={"Remember Me"}*/}
+            {/*>*/}
+            {/*    <Checkbox*/}
+            {/*        name={"rememberMe"}*/}
+            {/*        checked={values.rememberMe || false}*/}
+            {/*        onChange={(event: any) => setValues({ ...values, rememberMe: event.target.checked })}*/}
+            {/*    />*/}
+            {/*</Input.Wrapper>*/}
         </>
     );
 }
