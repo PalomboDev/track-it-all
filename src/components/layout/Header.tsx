@@ -1,23 +1,27 @@
 import type { HeaderLink } from "@lib/types/layout";
 
 import {
+    Box,
     Center,
     Container,
     Group,
     Button,
     Burger,
     Paper,
+    Image,
     Menu,
     Header as MantineHeader,
-    createStyles
+    createStyles, MantineTheme, Title
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown, IconLogout } from "@tabler/icons";
+import { useDisclosure, useMediaQuery, useViewportSize } from "@mantine/hooks";
+import { IconChevronDown, IconLogout, IconUserCircle } from "@tabler/icons";
 import { NextRouter, useRouter } from "next/router";
 import { logout, redirectToLogin } from "@lib/auth";
 import { User } from "@supabase/gotrue-js";
 import { sendSuccessNotification } from "@lib/notifications";
+import { useMemo } from "react";
 
+import emoji from "node-emoji";
 import Link from "next/link";
 
 const HEADER_HEIGHT = 60;
@@ -77,8 +81,12 @@ type HeaderProps = {
 export default function Header({ user, links }: HeaderProps) {
     const router: NextRouter = useRouter();
 
+    const { width } = useViewportSize();
     const { classes } = useStyles();
     const [opened, { toggle }] = useDisclosure(false);
+
+    const isSmall = useMemo<boolean>(() => width < 769, [width]);
+    const actionButtonDisplay = useMemo<string>(() => isSmall ? "none" : "inline-block", [isSmall]);
 
     const items = links.map((link) => {
         const menuItems = link.links?.map((item) => (
@@ -114,6 +122,13 @@ export default function Header({ user, links }: HeaderProps) {
                     color={"dark"}
                     variant={"subtle"}
                     leftIcon={link.icon}
+                    sx={{
+                        width: "auto",
+
+                        "@media (max-width: 768px)": {
+                            width: "100%"
+                        }
+                    }}
                 >
                     {link.label}
                 </Button>
@@ -136,11 +151,60 @@ export default function Header({ user, links }: HeaderProps) {
 
                             <Menu.Dropdown className={classes.burger}>
                                 {items}
+
+                                {!user && <>
+                                    <Menu.Divider/>
+                                    <Button
+                                        size={"sm"}
+                                        color={"dark"}
+                                        variant={"subtle"}
+                                        leftIcon={<IconLogout/>}
+                                        className={classes.link}
+                                        sx={{
+                                            width: "100%"
+                                        }}
+                                        onClick={() => {
+                                            if (!user) {
+                                                redirectToLogin(router).catch(console.error);
+                                                toggle();
+                                            }
+                                        }}
+                                    >
+                                        Login
+                                    </Button>
+                                </>}
+
+                                {user && <>
+                                    <Menu.Divider/>
+                                    <Button
+                                        size={"sm"}
+                                        color={"dark"}
+                                        variant={"subtle"}
+                                        leftIcon={<IconLogout/>}
+                                        className={classes.link}
+                                        sx={{
+                                            width: "100%"
+                                        }}
+                                        onClick={() => {
+                                            if (user) {
+                                                logout().then(data => {
+                                                    router.push("/").then(data => {
+                                                        sendSuccessNotification("You have successfully logged out!", "", 5000);
+                                                    }).catch(console.error);
+                                                }).catch(console.error);
+                                                toggle();
+                                            }
+                                        }}
+                                    >
+                                        Logout
+                                    </Button>
+                                    <Menu.Divider/>
+                                    <Menu.Label>{user?.email}</Menu.Label>
+                                </>}
                             </Menu.Dropdown>
                         </Menu>
 
-                        <h1>TrackItAll</h1>
-                        {/* <MantineLogo size={28} /> */}
+                        <Title>{emoji.get("package")} TrackItAll</Title>
                     </Group>
                     <Group spacing={5} className={classes.links}>
                         {items}
@@ -154,7 +218,13 @@ export default function Header({ user, links }: HeaderProps) {
                                 redirectToLogin(router).catch(console.error);
                             }
                         }}
-                        sx={{ height: 30 }}
+                        sx={{
+                            height: 30,
+
+                            "@media (max-width: 768px)": {
+                                display: "none"
+                            }
+                        }}
                     >
                         Login
                     </Button>}
@@ -164,7 +234,13 @@ export default function Header({ user, links }: HeaderProps) {
                             <Button
                                 size={"md"}
                                 radius={"xl"}
-                                sx={{ height: 30 }}
+                                sx={{
+                                    height: 30,
+
+                                    "@media (max-width: 768px)": {
+                                        display: "none"
+                                    }
+                            }}
                             >
                                 Profile
                             </Button>
