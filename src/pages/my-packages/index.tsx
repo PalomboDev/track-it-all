@@ -8,6 +8,7 @@ import { NextRouter, useRouter } from "next/router";
 
 import Layout from "@components/layout/Layout";
 import MyPackagesGrid from "@components/my-packages/MyPackagesGrid";
+import { useEffect } from "react";
 
 type MyPackagesIndexProps = {
     user: User | null;

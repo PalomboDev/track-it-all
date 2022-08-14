@@ -7,17 +7,18 @@ import {
     RegisterFormValues,
     registerFormValuesValidation
 } from "@lib/types/auth";
-import { Box, Button, Loader } from "@mantine/core";
+import { Box, Button, Title, Text, Anchor, Loader } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 import { AlreadyLoggedIn } from "@components/auth/AlreadyLoggedIn";
-import { login  } from "@lib/auth";
-
-import LoginForm from "@components/auth/LoginForm";
-import RegisterForm from "@components/auth/RegisterForm";
+import { login } from "@lib/auth";
 import { sendErrorNotification } from "@lib/notifications";
 import { NextRouter, useRouter } from "next/router";
 import { User } from "@supabase/gotrue-js";
+
+import Link from "next/link";
+import LoginForm from "@components/auth/LoginForm";
+import RegisterForm from "@components/auth/RegisterForm";
 
 type AuthFormProps = {
     user?: User | null;
@@ -29,6 +30,8 @@ export default function AuthForm({ user, type }: AuthFormProps) {
 
     const [initialValues, setInitialValues] = useState<any>({});
     const [validate, setValidate] = useState<any>(null);
+    const [headerText, setHeaderText] = useState<string>("");
+    const [subHeaderText, setSubHeaderText] = useState<JSX.Element | undefined>(undefined);
     const [buttonText, setButtonText] = useState<string>("");
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -42,17 +45,21 @@ export default function AuthForm({ user, type }: AuthFormProps) {
             case AuthFormType.LOGIN: {
                 setInitialValues(loginFormInitialValues);
                 setValidate(loginFormValuesValidation);
+                setHeaderText("Login");
+                setSubHeaderText(<Text>Need an account? Create one <Link href={"/auth/register"} passHref={true}><Anchor>here</Anchor></Link>.</Text>)
                 setButtonText("Login");
                 break;
             }
             case AuthFormType.REGISTER: {
                 setInitialValues(registerFormInitialValues);
                 setValidate(registerFormValuesValidation);
+                setHeaderText("Register");
+                setSubHeaderText(<Text>Already have an account? Login <Link href={"/auth/login"} passHref={true}><Anchor>here</Anchor></Link>.</Text>)
                 setButtonText("Register");
                 break;
             }
         }
-    }, []);
+    }, [type]);
 
     async function onSubmit(): Promise<void> {
         let values: LoginFormValues | RegisterFormValues = form.values;
@@ -125,6 +132,15 @@ export default function AuthForm({ user, type }: AuthFormProps) {
                 padding: "20px"
             }}
         >
+            <Box
+                sx={{
+                    textAlign: "center"
+                }}
+            >
+                <Title>{headerText}</Title>
+                {subHeaderText}
+            </Box>
+
             <form
                 onSubmit={(event) => {
                     event.preventDefault();

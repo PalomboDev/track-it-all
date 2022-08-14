@@ -133,6 +133,10 @@ export async function redirectToLogin(router: NextRouter): Promise<boolean> {
 
     let callbackUrl: string = router.asPath ? `?callbackUrl=${router.asPath}` : "";
 
+    if (callbackUrl.includes("/auth")) {
+        callbackUrl = "";
+    }
+
     return router.push(`/auth/login${callbackUrl}`);
 }
 
