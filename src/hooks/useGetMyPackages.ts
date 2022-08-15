@@ -39,6 +39,10 @@ export function useGetMyPackages(userId: string | undefined): MyPackagesData {
                     setIsLoading(false);
                 }
             });
+        } else {
+            setIsLoading(false);
+            setError(null);
+            setMyPackages([]);
         }
     }
 
@@ -48,7 +52,7 @@ export function useGetMyPackages(userId: string | undefined): MyPackagesData {
 
     if (!userId) {
         return {
-            data: null,
+            data: [],
             error: null,
             isLoading: false,
             reload
