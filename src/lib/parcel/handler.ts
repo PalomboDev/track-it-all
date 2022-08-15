@@ -1,6 +1,30 @@
 import type { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
 import { supabase } from "@lib/supabaseClient";
+import Parcel from "@lib/parcel/Parcel";
+import { ParcelEvent, ParcelLatestStatus } from "@lib/types/parcel";
+
+export async function getParcel(trackingNumber: string): Promise<Parcel | null> {
+    const response: Response = await fetch("/api/package/track", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            trackingNumber
+        })
+    });
+
+    if (response.ok) {
+        // Response Data
+        const data: any = await response.json();
+        const parcel: Parcel = data.parcel as Parcel;
+
+        return parcel;
+    }
+
+    return null;
+}
 
 export async function getMyPackages(userId: string): Promise<any> {
     return supabase
@@ -33,4 +57,34 @@ export async function setMyPackageName(trackingNumber: string, name: string): Pr
             name
         })
         .eq("trackingNumber", trackingNumber);
+}
+
+export function getParcelLatestStatus(parcel: Parcel): ParcelLatestStatus {
+    if (parcel.events.length > 0) {
+        const latestEvent: ParcelEvent = parcel.events[0];
+        const latestEventStatus: string = latestEvent.status.toLowerCase();
+        const deliveredTerms: string[] = ["delivered", "arrived", "picked up"]
+
+        for (let deliveredTerm of deliveredTerms) {
+            if (latestEventStatus.includes(deliveredTerm)) {
+                return ParcelLatestStatus.DELIVERED;
+            }
+        }
+    }
+
+    return ParcelLatestStatus.IN_ROUTE;
+}
+
+export function parcelLatestStatusToColor(status: ParcelLatestStatus): string {
+    switch (status) {
+        case ParcelLatestStatus.IN_ROUTE: {
+            return "#FFF9DB";
+        }
+        case ParcelLatestStatus.DELIVERED: {
+            return "#EBFBEE";
+        }
+        default: {
+            return "#FFFFFF";
+        }
+    }
 }

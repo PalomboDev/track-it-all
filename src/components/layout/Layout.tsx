@@ -1,7 +1,7 @@
 import type { HeaderLink } from "@lib/types/layout";
 import type { User } from "@supabase/gotrue-js";
 
-import { IconHome, IconPackage } from "@tabler/icons";
+import { IconTruckDelivery, IconPackage } from "@tabler/icons";
 
 import Header from "@components/layout/Header";
 import Footer from "@components/layout/Footer";
@@ -15,8 +15,8 @@ export default function Layout({ user, children }: LayoutProps): JSX.Element {
     const links: HeaderLink[] = [
         {
             link: "/",
-            label: "Home",
-            icon: <IconHome/>
+            label: "Track",
+            icon: <IconTruckDelivery/>
         },
         {
             link: "/my-packages",

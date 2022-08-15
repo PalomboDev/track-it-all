@@ -11,3 +11,8 @@ export type ParcelEvent = {
     date: Date;
     location: string;
 };
+
+export enum ParcelLatestStatus {
+    IN_ROUTE = "IN_ROUTE",
+    DELIVERED = "DELIVERED"
+}

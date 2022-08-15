@@ -1,16 +1,23 @@
 import type { MyPackage } from "@prisma/client";
 
-import { Box, Button, Card, Divider, Loader, Menu, Text, Tooltip } from "@mantine/core";
+import { Box, Button, Card, Divider, Skeleton, Text, Loader, Menu, Tooltip } from "@mantine/core";
 import { IconCircleMinus, IconEye, IconPencil, IconTool } from "@tabler/icons";
 
-import { useState } from "react";
-import { stopTrackingMyPackage } from "@lib/parcel/handler";
+import { useEffect, useState } from "react";
+import {
+    getParcel,
+    getParcelLatestStatus,
+    parcelLatestStatusToColor,
+    stopTrackingMyPackage
+} from "@lib/parcel/handler";
 import { sendErrorNotification, sendSuccessNotification } from "@lib/notifications";
 import { NextRouter, useRouter } from "next/router";
 
 import moment, { Moment } from "moment/moment";
 
 import EditNameModal from "@components/my-packages/EditNameModal";
+import Parcel from "@lib/parcel/Parcel";
+import MyPackagesGridItemSkeleton from "@components/my-packages/MyPackagesGridItemSkeleton";
 
 type MyPackagesGridItemProps = {
     myPackage: MyPackage;
@@ -22,9 +29,19 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
 
     const date: Moment = moment.utc(myPackage.insertedAt).local(false);
 
+    const [parcel, setParcel] = useState<Parcel | null | undefined>(undefined);
     const [isViewing, setIsViewing] = useState<boolean>(false);
     const [isModifying, setIsModifying] = useState<boolean>(false);
     const [isEditNameModalOpen, setIsEditNameModalOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        getParcel(myPackage.trackingNumber).then(data => {
+            setParcel(data as Parcel | null);
+        }).catch(error => {
+            console.error(error);
+            setParcel(null)
+        });
+    }, []);
 
     function handleView(): void {
         if (isViewing) {
@@ -36,12 +53,6 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
         router.push("/?trackingNumber=" + myPackage.trackingNumber).then(data => {
             setIsViewing(false);
         }).catch(console.error);
-    }
-
-    function handleEditName(): void {
-        if (isModifying) {
-            return;
-        }
     }
 
     function handleStopTracking(): void {
@@ -70,6 +81,12 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
         });
     }
 
+    if (!parcel) {
+        return (
+            <MyPackagesGridItemSkeleton />
+        );
+    }
+
     return (
         <Card
             key={myPackage.id}
@@ -78,7 +95,8 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
             radius={"md"}
             withBorder={true}
             sx={{
-                textAlign: "center"
+                textAlign: "center",
+                backgroundColor: parcelLatestStatusToColor(getParcelLatestStatus(parcel)),
             }}
         >
             <EditNameModal
@@ -109,11 +127,17 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
 
             <Box>
                 <Text size={"sm"}>
-                    Started Tracking At:
+                    Latest Status:
                 </Text>
 
-                <Text size={"sm"} color={"dimmed"}>
-                    {date.format("MMM D, YYYY h:mm A")}
+                <Text size={"sm"} color={"dimmed"}
+                      sx={{
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis"
+                      }}
+                >
+                    {parcel.events[0] && parcel.events[0].status}
                 </Text>
             </Box>
 
@@ -156,7 +180,7 @@ export default function MyPackagesGridItem({ myPackage, reload }: MyPackagesGrid
                             Edit Name
                         </Menu.Item>
 
-                        <Menu.Divider />
+                        <Menu.Divider/>
 
                         <Menu.Item
                             color={"red"}

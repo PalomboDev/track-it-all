@@ -1,14 +1,15 @@
 import type { User } from "@supabase/gotrue-js";
 
 import { useEffect, useState } from "react";
-import { ParcelEvent, ParcelRecipient } from "@lib/types/parcel";
-import { Box, Container, Text, Timeline, SimpleGrid, Loader, Button } from "@mantine/core";
+import { ParcelEvent, ParcelLatestStatus, ParcelRecipient } from "@lib/types/parcel";
+import { Box, Container, SimpleGrid, Text, Timeline } from "@mantine/core";
 import { useStatusToIcon } from "@hooks/useStatusToIcon";
 
 import moment, { Moment } from "moment";
 
 import Parcel from "@lib/parcel/Parcel";
 import SaveToMyPackagesButton from "@components/my-packages/SaveToMyPackagesButton";
+import { getParcelLatestStatus } from "@lib/parcel/handler";
 
 type ParcelInformationProps = {
     user?: User | null;
@@ -23,17 +24,8 @@ export function ParcelInformation({ user, parcel }: ParcelInformationProps): JSX
     useEffect(() => {
         setIsDelivered(false);
 
-        if (parcel.events.length > 0) {
-            const firstEvent: ParcelEvent = parcel.events[0];
-            const firstEventStatus: string = firstEvent.status.toLowerCase();
-            const deliveredTerms: string[] = ["delivered", "arrived", "picked up"]
-
-            for (let deliveredTerm of deliveredTerms) {
-                if (firstEventStatus.includes(deliveredTerm)) {
-                    setIsDelivered(true);
-                    break;
-                }
-            }
+        if (getParcelLatestStatus(parcel) === ParcelLatestStatus.DELIVERED) {
+            setIsDelivered(true);
         }
     }, [parcel]);
 

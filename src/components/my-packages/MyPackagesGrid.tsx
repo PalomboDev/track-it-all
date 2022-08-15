@@ -6,6 +6,7 @@ import { useGetMyPackages } from "@hooks/useGetMyPackages";
 
 import moment, { Moment } from "moment/moment";
 import MyPackagesGridItem from "@components/my-packages/MyPackagesGridItem";
+import MyPackagesGridItemSkeleton from "@components/my-packages/MyPackagesGridItemSkeleton";
 
 type MyPackagesGridProps = {
     user: User;
@@ -16,13 +17,19 @@ export default function MyPackagesGrid({ user }: MyPackagesGridProps): JSX.Eleme
 
     if (isLoading) {
         return (
-            <Box
-                sx={{
-                    textAlign: "center"
-                }}
+            <SimpleGrid
+                cols={4}
+                spacing={"lg"}
+                breakpoints={[
+                    { maxWidth: 1500, cols: 3, spacing: "sm" },
+                    { maxWidth: 1100, cols: 2, spacing: "sm" },
+                    { maxWidth: 768, cols: 1, spacing: "sm" }
+                ]}
             >
-                <Loader variant={"oval"}/>
-            </Box>
+                {Array(9).fill(0).map((_, index) => (
+                    <MyPackagesGridItemSkeleton key={index}/>
+                ))}
+            </SimpleGrid>
         );
     }
 

@@ -7,6 +7,7 @@ import { mostRecentTrackedIdKey } from "@lib/constants";
 
 import Parcel from "@lib/parcel/Parcel";
 import Link from "next/link";
+import { getParcel } from "@lib/parcel/handler";
 
 type TrackBoxProps = {
     isLoading: boolean;
@@ -65,26 +66,15 @@ export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }:
             sendErrorNotification(new Error("Check tracking number and try again."));
         }
 
-        const response: Response = await fetch("/api/package/track", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                trackingNumber
-            })
-        });
+        const parcel: Parcel | null = await getParcel(trackingNumber);
 
-        if (response.ok) {
-            // Response Data
-            const data: any = await response.json();
-            const parcel: Parcel = data.parcel as Parcel;
-
+        if (parcel) {
             setParcel(parcel);
-            setIsLoading(false);
         } else {
-            onError(new Error("Response not ok"));
+            onError(new Error("Parcel not found."));
         }
+
+        setIsLoading(false);
     }
 
     return (
