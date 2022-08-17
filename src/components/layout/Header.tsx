@@ -211,7 +211,15 @@ export default function Header({ user, links }: HeaderProps) {
                             </Menu.Dropdown>
                         </Menu>
 
-                        <Title>{emoji.get("package")} TrackItAll</Title>
+                        <Link href={"/"}>
+                            <Title
+                                style={{
+                                    cursor: "pointer"
+                                }}
+                            >
+                                {emoji.get("package")} TrackItAll
+                            </Title>
+                        </Link>
                     </Group>
                     <Group spacing={5} className={classes.links}>
                         {items}
