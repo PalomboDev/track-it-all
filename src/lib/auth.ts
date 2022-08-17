@@ -11,5 +11,5 @@ export async function redirectToLogin(router: NextRouter): Promise<boolean> {
         callbackUrl = "";
     }
 
-    return router.push(`/api/auth/signin`);
+    return router.push(`/api/auth/signin${callbackUrl}`);
 }

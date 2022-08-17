@@ -65,7 +65,7 @@ export function getParcelLatestStatus(parcel: Parcel): ParcelLatestStatus {
     if (parcel.events.length > 0) {
         const latestEvent: ParcelEvent = parcel.events[0];
         const latestEventStatus: string = latestEvent.status.toLowerCase();
-        const deliveredTerms: string[] = ["delivered", "arrived", "picked up"]
+        const deliveredTerms: string[] = ["delivered"]
 
         for (let deliveredTerm of deliveredTerms) {
             if (latestEventStatus.includes(deliveredTerm)) {

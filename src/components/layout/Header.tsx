@@ -19,11 +19,10 @@ import { IconChevronDown, IconLogout } from "@tabler/icons";
 import { NextRouter, useRouter } from "next/router";
 import { redirectToLogin } from "@lib/auth";
 import { sendSuccessNotification } from "@lib/notifications";
+import { signOut } from "next-auth/react";
 
 import emoji from "node-emoji";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
-import { authOptions } from "@pages/api/auth/[...nextauth]";
 
 const HEADER_HEIGHT = 60;
 
@@ -84,6 +83,23 @@ export default function Header({ user, links }: HeaderProps) {
 
     const { classes } = useStyles();
     const [opened, { toggle }] = useDisclosure(false);
+
+    function handleSignOut() {
+        let callbackUrl: string = router.asPath;
+
+        if (!callbackUrl.includes("trackingNumber=")) {
+            callbackUrl = "/";
+        }
+
+        signOut({
+            redirect: true,
+            callbackUrl
+        }).then(data => {
+            router.push("/").then(data => {
+                sendSuccessNotification("You have successfully logged out!", "", 5000);
+            }).catch(console.error);
+        }).catch(console.error);
+    }
 
     const items = links.map((link) => {
         const menuItems = link.links?.map((item) => (
@@ -182,14 +198,7 @@ export default function Header({ user, links }: HeaderProps) {
                                         }}
                                         onClick={() => {
                                             if (user) {
-                                                signOut({
-                                                    redirect: true,
-                                                    callbackUrl: "/"
-                                                }).then(data => {
-                                                    router.push("/").then(data => {
-                                                        sendSuccessNotification("You have successfully logged out!", "", 5000);
-                                                    }).catch(console.error);
-                                                }).catch(console.error);
+                                                handleSignOut();
                                                 toggle();
                                             }
                                         }}
@@ -250,14 +259,7 @@ export default function Header({ user, links }: HeaderProps) {
                             <Menu.Item
                                 icon={<IconLogout size={14}/>}
                                 onClick={() => {
-                                    signOut({
-                                        redirect: true,
-                                        callbackUrl: "/"
-                                    }).then(data => {
-                                        router.push("/").then(data => {
-                                            sendSuccessNotification("You have successfully logged out!", "", 5000);
-                                        }).catch(console.error);
-                                    }).catch(console.error);
+                                    handleSignOut();
                                 }}
                             >
                                 Logout
