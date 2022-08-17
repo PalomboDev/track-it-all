@@ -1,9 +1,8 @@
 import type { MyPackage } from "@prisma/client";
 
-import { supabase } from "@lib/supabaseClient";
 import { useState, useMemo, useEffect } from "react";
-import { PostgrestError } from "@supabase/supabase-js";
 import { getMyPackages } from "@lib/parcel/handler";
+import { PostgrestError } from "@supabase/supabase-js";
 
 export type MyPackagesData = {
     data: MyPackage[] | null;

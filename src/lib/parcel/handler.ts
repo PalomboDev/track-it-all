@@ -1,8 +1,10 @@
 import type { PostgrestFilterBuilder } from "@supabase/postgrest-js";
 
 import { supabase } from "@lib/supabaseClient";
-import Parcel from "@lib/parcel/Parcel";
 import { ParcelEvent, ParcelLatestStatus } from "@lib/types/parcel";
+
+import Parcel from "@lib/parcel/Parcel";
+import { prisma } from "@lib/prisma";
 
 export async function getParcel(trackingNumber: string): Promise<Parcel | null> {
     const response: Response = await fetch("/api/package/track", {
@@ -29,8 +31,8 @@ export async function getParcel(trackingNumber: string): Promise<Parcel | null> 
 export async function getMyPackages(userId: string): Promise<any> {
     return supabase
         .from("MyPackage")
-        .select("*")
-        .eq("userId", userId)
+        .select(`*`)
+        .like("userId", userId)
         .then(data => data);
 }
 

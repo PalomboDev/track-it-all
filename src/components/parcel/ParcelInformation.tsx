@@ -1,4 +1,4 @@
-import type { User } from "@supabase/gotrue-js";
+import type { User } from "@prisma/client";
 
 import { useEffect, useState } from "react";
 import { ParcelEvent, ParcelLatestStatus, ParcelRecipient } from "@lib/types/parcel";

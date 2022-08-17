@@ -1,5 +1,5 @@
 import type { HeaderLink } from "@lib/types/layout";
-import type { User } from "@supabase/gotrue-js";
+import type { User } from "@prisma/client";
 
 import { IconTruckDelivery, IconPackage } from "@tabler/icons";
 

@@ -1,10 +1,9 @@
-import type { User } from "@supabase/gotrue-js";
+import type { User } from "@prisma/client";
 
 import { useGetMyPackages } from "@hooks/useGetMyPackages";
 import { Button, Box, Loader } from "@mantine/core";
 import { IconCheck, IconCircleMinus, IconPlus } from "@tabler/icons";
 import { useEffect, useState } from "react";
-import { supabase } from "@lib/supabaseClient";
 import { redirectToLogin } from "@lib/auth";
 import { startTrackingMyPackage, stopTrackingMyPackage } from "@lib/parcel/handler";
 import { sendErrorNotification, sendSuccessNotification } from "@lib/notifications";
@@ -38,17 +37,7 @@ export default function SaveToMyPackagesButton({ user, parcel }: SaveToMyPackage
             return;
         }
 
-        let requireLogin: boolean = true;
-
-        if (user) {
-            const refreshData = await supabase.auth.refreshSession();
-
-            if (refreshData && refreshData.data && refreshData.data.access_token) {
-                requireLogin = false;
-            }
-        }
-
-        if (!user || requireLogin) {
+        if (!user) {
             redirectToLogin(router).catch(console.error);
         } else {
             setIsDoingSomething(true);

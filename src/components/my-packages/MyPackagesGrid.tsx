@@ -1,5 +1,4 @@
-import type { User } from "@supabase/gotrue-js";
-import type { MyPackage } from "@prisma/client";
+import type { User, MyPackage } from "@prisma/client";
 
 import { Text, Box, SimpleGrid, Loader } from "@mantine/core";
 import { useGetMyPackages } from "@hooks/useGetMyPackages";

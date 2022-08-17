@@ -1,4 +1,5 @@
 import type { HeaderLink } from "@lib/types/layout";
+import type { User } from "@prisma/client";
 
 import {
     Box,
@@ -16,12 +17,13 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconChevronDown, IconLogout } from "@tabler/icons";
 import { NextRouter, useRouter } from "next/router";
-import { logout, redirectToLogin } from "@lib/auth";
-import { User } from "@supabase/gotrue-js";
+import { redirectToLogin } from "@lib/auth";
 import { sendSuccessNotification } from "@lib/notifications";
 
 import emoji from "node-emoji";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
+import { authOptions } from "@pages/api/auth/[...nextauth]";
 
 const HEADER_HEIGHT = 60;
 
@@ -180,7 +182,10 @@ export default function Header({ user, links }: HeaderProps) {
                                         }}
                                         onClick={() => {
                                             if (user) {
-                                                logout().then(data => {
+                                                signOut({
+                                                    redirect: true,
+                                                    callbackUrl: "/"
+                                                }).then(data => {
                                                     router.push("/").then(data => {
                                                         sendSuccessNotification("You have successfully logged out!", "", 5000);
                                                     }).catch(console.error);
@@ -245,7 +250,10 @@ export default function Header({ user, links }: HeaderProps) {
                             <Menu.Item
                                 icon={<IconLogout size={14}/>}
                                 onClick={() => {
-                                    logout().then(data => {
+                                    signOut({
+                                        redirect: true,
+                                        callbackUrl: "/"
+                                    }).then(data => {
                                         router.push("/").then(data => {
                                             sendSuccessNotification("You have successfully logged out!", "", 5000);
                                         }).catch(console.error);

@@ -1,16 +1,16 @@
 import type { GetServerSidePropsContext, NextPage } from "next";
+import type { User } from "@prisma/client";
 
 import { Box } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { NextRouter, useRouter } from "next/router";
 import { ParcelInformation } from "@components/parcel/ParcelInformation";
+import { GetServerSidePropsResult } from "next";
+import { getUserServerSideProps } from "@lib/auth-server";
 
 import Parcel from "@lib/parcel/Parcel";
 import Layout from "@components/layout/Layout";
 import TrackBox from "@components/track/TrackBox";
-import { GetServerSidePropsResult } from "next";
-import { getUserServerSideProps } from "@lib/auth";
-import { User } from "@supabase/gotrue-js";
 
 type IndexProps = {
     user: User | null;

@@ -1,14 +1,14 @@
 import type { NextPage } from "next";
+import type { User } from "@prisma/client";
 
 import { Box, Title } from "@mantine/core";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
-import { getUserServerSideProps, redirectToLogin } from "@lib/auth";
-import { User } from "@supabase/gotrue-js";
+import { redirectToLogin } from "@lib/auth";
 import { NextRouter, useRouter } from "next/router";
 
 import Layout from "@components/layout/Layout";
 import MyPackagesGrid from "@components/my-packages/MyPackagesGrid";
-import { useEffect } from "react";
+import { getUserServerSideProps } from "@lib/auth-server";
 
 type MyPackagesIndexProps = {
     user: User | null;
