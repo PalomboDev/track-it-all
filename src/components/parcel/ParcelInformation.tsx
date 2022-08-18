@@ -62,7 +62,7 @@ export function ParcelInformation({ user, parcel }: ParcelInformationProps): JSX
                         <Text size={"xl"}><strong>Package Info</strong></Text>
 
                         <Text>Tracking Number: {parcel.trackingNumber}</Text>
-                        {parcel.events.length > 0 && <Text>Latest Courier: {parcel.events[0].courierCode}</Text>}
+                        {parcel.events.length > 0 && <Text>Courier: {parcel.events[0].courierCode}</Text>}
                     </Container>
 
                     {/* Recipient */}
