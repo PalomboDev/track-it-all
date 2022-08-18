@@ -77,7 +77,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             return {
                 status: event.status,
                 date: new Date(event.datetime),
-                location: event.location
+                location: event.location,
+                courierCode: event.courierCode
             };
         });
         const parcel: Parcel = new Parcel(trackingNumber, "FedMex", parcelRecipient, parcelEvents);

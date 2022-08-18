@@ -10,6 +10,7 @@ export type ParcelEvent = {
     status: string;
     date: Date;
     location: string;
+    courierCode: string;
 };
 
 export enum ParcelLatestStatus {
