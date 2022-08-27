@@ -25,7 +25,7 @@ export default function MyPackagesGrid({ user }: MyPackagesGridProps): JSX.Eleme
                     { maxWidth: 768, cols: 1, spacing: "sm" }
                 ]}
             >
-                {Array(9).fill(0).map((_, index) => (
+                {Array(12).fill(0).map((_, index) => (
                     <MyPackagesGridItemSkeleton key={index}/>
                 ))}
             </SimpleGrid>
