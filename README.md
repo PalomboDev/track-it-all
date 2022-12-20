@@ -1,3 +1,3 @@
 TrackItAll
 
-NextJS, React, Prisma, & Supabase (Postgresql) parcel tracking service with authentican.
+NextJS, React, Prisma, & Supabase (Postgresql) parcel tracking service with authentication.
