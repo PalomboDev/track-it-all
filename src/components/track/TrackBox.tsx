@@ -96,7 +96,7 @@ export default function TrackBox({ isLoading, setIsLoading, parcel, setParcel }:
                 <TextInput
                     required={true}
                     label={"Tracking Number"}
-                    placeholder={"12345 67890 12345 67890"}
+                    placeholder={"12345678901234567890"}
                     {...form.getInputProps("trackingNumber")}
                 />
 
